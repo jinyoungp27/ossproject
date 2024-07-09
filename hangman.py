@@ -21,7 +21,8 @@ LIGHT_BLUE = (102,255,255)
 
 btn_font = pygame.font.SysFont("arial", 20)
 guess_font = pygame.font.SysFont("monospace", 24)
-lost_font = pygame.font.SysFont('arial', 45)
+lost_font = pygame.font.SysFont('arial', 20)
+title_font = pygame.font.SysFont('arial', 60)
 word = ''
 buttons = []
 guessed = []
@@ -29,18 +30,20 @@ hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.pn
 
 limbs = 0
 
+##########################영진
+#def show_page():
 
+######################
 def redraw_game_window():
     global guessed
     global hangmanPics
     global limbs
-    win.fill(GREEN)
+    win.fill(WHITE)
     # Buttons
     for i in range(len(buttons)):
         if buttons[i][4]:
             pygame.draw.circle(win, BLACK, (buttons[i][1], buttons[i][2]), buttons[i][3])
-            pygame.draw.circle(win, buttons[i][0], (buttons[i][1], buttons[i][2]), buttons[i][3] - 2
-                               )
+            pygame.draw.circle(win, buttons[i][0], (buttons[i][1], buttons[i][2]), buttons[i][3] - 2)
             label = btn_font.render(chr(buttons[i][5]), 1, BLACK)
             win.blit(label, (buttons[i][1] - (label.get_width() / 2), buttons[i][2] - (label.get_height() / 2)))
 
@@ -101,7 +104,7 @@ def end(winner=False):
     winTxt = 'WINNER!, press any key to play again...'
     redraw_game_window()
     pygame.time.delay(1000)
-    win.fill(GREEN)
+    win.fill(WHITE)
 
     if winner == True:
         label = lost_font.render(winTxt, 1, BLACK)
@@ -137,6 +140,46 @@ def reset():
     guessed = []
     word = randomWord()
 
+
+def main_menu():
+    menu = True
+    while menu:
+        win.fill(WHITE)
+        title = title_font.render("HANGMAN GAME", 1, BLACK)
+        win.blit(title, (winWidth / 2 - title.get_width() / 2, 100))
+
+        easy_button = pygame.Rect(winWidth / 2 - 50, 200, 100, 50)
+        normal_button = pygame.Rect(winWidth / 2 - 50, 270, 100, 50)
+        hard_button = pygame.Rect(winWidth / 2 - 50, 340, 100, 50)
+
+        pygame.draw.rect(win, LIGHT_BLUE, easy_button)
+        pygame.draw.rect(win, LIGHT_BLUE, normal_button)
+        pygame.draw.rect(win, LIGHT_BLUE, hard_button)
+
+        easy_label = btn_font.render("Easy", 1, BLACK)
+        normal_label = btn_font.render("Normal", 1, BLACK)
+        hard_label = btn_font.render("Hard", 1, BLACK)
+
+        win.blit(easy_label, (winWidth / 2 - easy_label.get_width() / 2, 215))
+        win.blit(normal_label, (winWidth / 2 - normal_label.get_width() / 2, 285))
+        win.blit(hard_label, (winWidth / 2 - hard_label.get_width() / 2, 355))
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if easy_button.collidepoint(event.pos):
+                    #set_difficulty('easy')
+                    menu = False
+                elif normal_button.collidepoint(event.pos):
+                    #set_difficulty('normal')
+                    menu = False
+                elif hard_button.collidepoint(event.pos):
+                    #set_difficulty("hard")
+                    munu = False
+        
+        pygame.display.update()
+
+
+
 #MAINLINE
 
 
@@ -152,8 +195,10 @@ for i in range(26):
     buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
     # buttons.append([color, x_pos, y_pos, radius, visible, char])
 
-word = randomWord()
+#word = randomWord()
 inPlay = True
+
+main_menu()
 
 while inPlay:
     redraw_game_window()
