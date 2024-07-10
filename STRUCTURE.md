@@ -1,5 +1,5 @@
 #brief structure of the program
-breif description : hangman game, 난이도와 힌트 추가 
+breif description : 난이도와 힌트를 제공하는 간단한 hangman game
 
 1. Objects
 
