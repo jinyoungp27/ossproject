@@ -32,6 +32,9 @@ hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.pn
 limbs = 1
 max_limbs = 5
 
+hint_button = {'color': LIGHT_BLUE, 'x' : winWidth - 100, 'y' : winHeight - 70, 'width' : 80, 'height' : 40, 'text' : 'HINT'}
+hint_limit = 3
+hint_used = 0
 
 #def show_page():
 
@@ -57,6 +60,17 @@ def redraw_game_window():
 
     pic = hangmanPics[limbs]
     win.blit(pic, (winWidth/2 - pic.get_width()/2 + 20, 150))
+    pygame.draw.rect(win, hint_button['color'],
+                     (hint_button['x'], hint_button['y'], hint_button['width'], hint_button['height']))
+    hint_label = btn_font.render(hint_button['text'], 1, BLACK)
+    win.blit(hint_label, (hint_button['x'] + (hint_button['width'] - hint_label.get_width()) / 2,
+                          hint_button['y'] + (hint_button['height'] - hint_label.get_height()) / 2))
+
+    hint_count_label = btn_font.render(f'{hint_used}/{hint_limit}', 1, BLACK)
+    win.blit(hint_count_label, (hint_button['x'] + (hint_button['width'] - hint_count_label.get_width()) / 2,
+                                hint_button['y'] + hint_button['height'])
+
+    
     pygame.display.update()
     
 def randomWord():
@@ -165,7 +179,30 @@ def reset():
     word = randomWord()
     max_limbs = 5 
 
-    
+##########################
+## 김미리
+## 모든 알파벳 집합, 현재 단어에 사용된 알파벳 집합 생성
+## 사용되지 않은 알파벳 리스트 생성
+## 사용되지 않은 알파벳이 있을 경우, 무작위로 하나 선택 후 buttons 리스트에서 해당 알파벳 비활성화
+def give_hint():
+    global buttons, word
+    global hint_used
+
+    if hint_used >= hint_limit:
+        return
+    hint_used += 1
+
+    alphabet = set(chr(i) for i in range(65, 91))
+    used_letters = set(word.upper())
+    unused_letters = list(alphabet - used_letters - set(guessed))
+
+    if unused_letters:
+        hint_letter = random.choice(unused_letters)
+        for i in range(len(buttons)):
+            if chr(buttons[i][5]) == hint_letter:
+                buttons[i][4] = False
+                break
+   
 
 def main_menu():
     global menu
@@ -208,8 +245,17 @@ def main_menu():
                     level = "hard"
                     word = randomWord()
                     menu = False
-        
+            
         pygame.display.update()
+            ## 김미리
+            ## 힌트 버튼 클릭시 give_hint() 함수 호출
+            #elif (hint_button['x'] < pygame.mouse.get_pos()[0] < hint_button['x'] + hint_button['width'] and hint_button['y'] < pygame.mouse.get_pos()[1] < hint_button['y'] + hint_button['height']):
+                give_hint()
+            
+
+                    
+        
+
         
 
 
