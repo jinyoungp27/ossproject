@@ -17,7 +17,7 @@ WHITE = (255,255,255)
 RED = (255,0, 0)
 GREEN = (0,255,0)
 BLUE = (0,0,255)
-LIGHT_BLUE = (102,255,255)
+LIGHT_BLUE = (224,224,224)
 
 btn_font = pygame.font.SysFont("arial", 20)
 guess_font = pygame.font.SysFont("monospace", 24)
@@ -56,7 +56,7 @@ def redraw_game_window():
     rect = label1.get_rect()
     length = rect[2]
 
-     ################################
+    
     ######이유진####################
     ##글자 및 목숨 이미지 위치 수정 ##
     ################################
@@ -219,7 +219,8 @@ def give_hint():
                 buttons[i][4] = False
                 break
    
-
+#이영진
+#난이도 선택을 위한 시작화면 설계
 def main_menu():
     global menu
     menu = True
@@ -248,6 +249,8 @@ def main_menu():
         win.blit(hard_label, (winWidth / 2 - hard_label.get_width() / 2, 355))
 
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_button.collidepoint(event.pos):
                     level = "easy"
@@ -261,7 +264,7 @@ def main_menu():
                     level = "hard"
                     word = randomWord()
                     menu = False
-            
+        
         pygame.display.update()
             
 
@@ -283,10 +286,9 @@ for i in range(26):
         x = 25 + (increase * (i - 13))
         y = 85
 
-    ####################################
+    
     ##이유진 ########################
     ##알파벳 버튼 UI 수정##
-    ###################################
 
     buttons.append([WHITE, x, y, 0, True, 65 + i])
     
