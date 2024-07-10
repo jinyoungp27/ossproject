@@ -17,7 +17,7 @@ WHITE = (255,255,255)
 RED = (255,0, 0)
 GREEN = (0,255,0)
 BLUE = (0,0,255)
-LIGHT_BLUE = (224,224,224)
+LIGHT_BLUE = (102,255,255)
 
 btn_font = pygame.font.SysFont("arial", 20)
 guess_font = pygame.font.SysFont("monospace", 24)
@@ -55,13 +55,25 @@ def redraw_game_window():
     label1 = guess_font.render(spaced, 1, BLACK)
     rect = label1.get_rect()
     length = rect[2]
-    
-    ################################
+
+     ################################
+    ######이유진####################
     ##글자 및 목숨 이미지 위치 수정 ##
     ################################
+
+    if level == "easy":
+        pic = hangmanPics[limbs]
+        win.blit(pic, (165, 365))
+    else:
+        pic = hangmanPics[limbs +2]
+        win.blit(pic, (235, 365))
+
+
+    word_x = (winWidth - length) // 2
+    win.blit(label1,(word_x, 200))
+
     
-    pic = hangmanPics[limbs]
-    win.blit(pic, (winWidth/2 - pic.get_width()/2 + 20, 150))
+    
     pygame.draw.rect(win, hint_button['color'],
                      (hint_button['x'], hint_button['y'], hint_button['width'], hint_button['height']))
     hint_label = btn_font.render(hint_button['text'], 1, BLACK)
@@ -77,7 +89,6 @@ def redraw_game_window():
 
 
     
-
 def randomWord():
     global max_limbs
     ###################################################
@@ -185,7 +196,7 @@ def reset():
     max_limbs = 5 
 
 ##########################
-## 김미리 give_hint(): 힌트 제공하는 코드 작성
+## 김미리
 ## 모든 알파벳 집합, 현재 단어에 사용된 알파벳 집합 생성
 ## 사용되지 않은 알파벳 리스트 생성
 ## 사용되지 않은 알파벳이 있을 경우, 무작위로 하나 선택 후 buttons 리스트에서 해당 알파벳 비활성화
@@ -209,8 +220,6 @@ def give_hint():
                 break
    
 
-##이영진 main_menu() 
-##기존 게임에 없는 난이도 선택 화면 생성
 def main_menu():
     global menu
     menu = True
@@ -275,7 +284,8 @@ for i in range(26):
         y = 85
 
     ####################################
-    ##버튼 하늘색 동그라미 없앰##
+    ##이유진 ########################
+    ##알파벳 버튼 UI 수정##
     ###################################
 
     buttons.append([WHITE, x, y, 0, True, 65 + i])
