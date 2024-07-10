@@ -28,7 +28,10 @@ guessed = []
 hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.png'), pygame.image.load('hangman2.png'), pygame.image.load('hangman3.png'), pygame.image.load('hangman4.png'), pygame.image.load('hangman5.png'), pygame.image.load('hangman6.png')]
 
 limbs = 0
-
+## 박진영
+max_limbs = 4
+level = 'easy'
+## 끝
 
 def redraw_game_window():
     global guessed
@@ -54,14 +57,25 @@ def redraw_game_window():
     pic = hangmanPics[limbs]
     win.blit(pic, (winWidth/2 - pic.get_width()/2 + 20, 150))
     pygame.display.update()
-
-
+    
 def randomWord():
-    file = open('words.txt')
+    ###################################################
+    ## 박진영                                          ##
+    ## hard 7글자 이상 파일인 words1.txt 가져와서 리턴         ##
+    ## easy, normal 7글자 이하 파일인 words2.txt 가져와서 리턴 ##
+    ###################################################
+    if level == 'hard':
+        file = open('words1.txt')
+    else:
+        file = open('words2.txt')
     f = file.readlines()
     i = random.randrange(0, len(f) - 1)
-
     return f[i][:-1]
+    
+    #file = open('words.txt')
+    #f = file.readlines()
+    #i = random.randrange(0, len(f) - 1)
+    #return f[i][:-1]
 
 
 def hang(guess):
@@ -122,6 +136,9 @@ def end(winner=False):
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 again = False
+    ###박진영###
+    select_level()
+    #########
     reset()
 
 
@@ -130,15 +147,60 @@ def reset():
     global guessed
     global buttons
     global word
+    ###박진영###
+    global max_limbs
+    #########
     for i in range(len(buttons)):
         buttons[i][4] = True
 
     limbs = 0
     guessed = []
     word = randomWord()
-
+    ###박진영###
+    max_limbs = 4 if level == 'easy' else 2
+    #########
+    
 #MAINLINE
 
+###박진영###
+def select_level():
+    global level
+    win.fill(WHITE)
+    easy_btn = pygame.Rect(winWidth / 2 - 100, winHeight / 2 - 60, 200, 40)
+    normal_btn = pygame.Rect(winWidth / 2 - 100, winHeight / 2, 200, 40)
+    hard_btn = pygame.Rect(winWidth / 2 - 100, winHeight / 2 + 60, 200, 40)
+
+    pygame.draw.rect(win, BLACK, easy_btn)
+    pygame.draw.rect(win, BLACK, normal_btn)
+    pygame.draw.rect(win, BLACK, hard_btn)
+
+    easy_label = btn_font.render("Easy", 1, WHITE)
+    normal_label = btn_font.render("Normal", 1, WHITE)
+    hard_label = btn_font.render("Hard", 1, WHITE)
+
+    win.blit(easy_label, (winWidth / 2 - easy_label.get_width() / 2, winHeight / 2 - 60 + (40 - easy_label.get_height()) / 2))
+    win.blit(normal_label, (winWidth / 2 - normal_label.get_width() / 2, winHeight / 2 + (40 - normal_label.get_height()) / 2))
+    win.blit(hard_label, (winWidth / 2 - hard_label.get_width() / 2, winHeight / 2 + 60 + (40 - hard_label.get_height()) / 2))
+
+    pygame.display.update()
+
+    selecting = True
+    while selecting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                clickPos = pygame.mouse.get_pos()
+                if easy_btn.collidepoint(clickPos):
+                    level = 'easy'
+                    selecting = False
+                elif normal_btn.collidepoint(clickPos):
+                    level = 'normal'
+                    selecting = False
+                elif hard_btn.collidepoint(clickPos):
+                    level = 'hard'
+                    selecting = False
+#########
 
 # Setup buttons
 increase = round(winWidth / 13)
@@ -150,9 +212,14 @@ for i in range(26):
         x = 25 + (increase * (i - 13))
         y = 85
     buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
-    # buttons.append([color, x_pos, y_pos, radius, visible, char])
+    #buttons.append([color, x_pos, y_pos, radius, visible, char])
 
-word = randomWord()
+###박진영###
+select_level()
+reset()
+#########
+
+#word = randomWord()
 inPlay = True
 
 while inPlay:
@@ -172,7 +239,9 @@ while inPlay:
                 guessed.append(chr(letter))
                 buttons[letter - 65][4] = False
                 if hang(chr(letter)):
-                    if limbs != 5:
+                    ###박진영###
+                    if limbs != 4:
+                    #########
                         limbs += 1
                     else:
                         end()
