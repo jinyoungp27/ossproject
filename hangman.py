@@ -77,6 +77,7 @@ def redraw_game_window():
 
 
     
+
 def randomWord():
     global max_limbs
     ###################################################
@@ -184,7 +185,7 @@ def reset():
     max_limbs = 5 
 
 ##########################
-## 김미리
+## 김미리 give_hint(): 힌트 제공하는 코드 작성
 ## 모든 알파벳 집합, 현재 단어에 사용된 알파벳 집합 생성
 ## 사용되지 않은 알파벳 리스트 생성
 ## 사용되지 않은 알파벳이 있을 경우, 무작위로 하나 선택 후 buttons 리스트에서 해당 알파벳 비활성화
@@ -208,6 +209,8 @@ def give_hint():
                 break
    
 
+##이영진 main_menu() 
+##기존 게임에 없는 난이도 선택 화면 생성
 def main_menu():
     global menu
     menu = True
