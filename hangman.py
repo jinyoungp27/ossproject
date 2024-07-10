@@ -28,7 +28,12 @@ buttons = []
 guessed = []
 hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.png'), pygame.image.load('hangman2.png'), pygame.image.load('hangman3.png'), pygame.image.load('hangman4.png'), pygame.image.load('hangman5.png'), pygame.image.load('hangman6.png')]
 
-limbs = 0
+limbs = 1
+max_limbs = 5
+level = 'easy'
+
+
+#def show_page():
 
 def redraw_game_window():
     global guessed
@@ -53,14 +58,27 @@ def redraw_game_window():
     pic = hangmanPics[limbs]
     win.blit(pic, (winWidth/2 - pic.get_width()/2 + 20, 150))
     pygame.display.update()
-
-
-def randomWord():
-    file = open('words.txt')
+    
+def randomWord(level = "easy"):
+    ###################################################
+    ## 박진영                                          ##
+    ## hard 7글자 이상 파일인 words1.txt 가져와서 리턴         ##
+    ## easy, normal 7글자 이하 파일인 words2.txt 가져와서 리턴 ##
+    ###################################################
+    if level == 'hard':
+        file = open('words_hard.txt')
+    else:
+        file = open('words_7.txt')
+        max_limbs = 3 if level == "normal" else 5
+        
     f = file.readlines()
     i = random.randrange(0, len(f) - 1)
-
     return f[i][:-1]
+    
+    #file = open('words.txt')
+    #f = file.readlines()
+    #i = random.randrange(0, len(f) - 1)
+    #return f[i][:-1]
 
 
 def hang(guess):
@@ -122,6 +140,8 @@ def end(winner=False):
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 again = False
+
+    main_menu()
     reset()
 
 
@@ -130,12 +150,15 @@ def reset():
     global guessed
     global buttons
     global word
+    global max_limbs
     for i in range(len(buttons)):
         buttons[i][4] = True
 
-    limbs = 0
+    limbs = 1
     guessed = []
     word = randomWord()
+    max_limbs = 5 if level == 'easy' else 3
+
     
 
 def main_menu():
@@ -180,8 +203,11 @@ def main_menu():
 
 
 
-#MAINLINE
 
+    
+   
+    
+#MAINLINE
 
 # Setup buttons
 increase = round(winWidth / 13)
@@ -193,12 +219,14 @@ for i in range(26):
         x = 25 + (increase * (i - 13))
         y = 85
     buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
-    # buttons.append([color, x_pos, y_pos, radius, visible, char])
+    #buttons.append([color, x_pos, y_pos, radius, visible, char])
+
+
+main_menu()
+reset()
 
 word = randomWord()
 inPlay = True
-
-main_menu()
 
 while inPlay:
     redraw_game_window()
@@ -217,7 +245,7 @@ while inPlay:
                 guessed.append(chr(letter))
                 buttons[letter - 65][4] = False
                 if hang(chr(letter)):
-                    if limbs != 5:
+                    if limbs != max_limbs:
                         limbs += 1
                     else:
                         end()
