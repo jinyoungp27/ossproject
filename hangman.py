@@ -52,11 +52,18 @@ def redraw_game_window():
     rect = label1.get_rect()
     length = rect[2]
     
-    win.blit(label1,(winWidth/2 - length/2, 400))
-
+    ################################
+    ##글자 및 목숨 이미지 위치 수정 ##
+    ################################
+    
     pic = hangmanPics[limbs]
-    win.blit(pic, (winWidth/2 - pic.get_width()/2 + 20, 150))
+    word_x = (winWidth - length) // 2
+
+    win.blit(label1,(word_x, 200))
+    win.blit(pic, (65, 280))
     pygame.display.update()
+
+
     
 def randomWord(level = "easy"):
     ###################################################
@@ -208,7 +215,14 @@ for i in range(26):
     else:
         x = 25 + (increase * (i - 13))
         y = 85
-    buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
+
+    ####################################
+    ##버튼 하늘색 동그라미 없앰##
+    ###################################
+
+    buttons.append([WHITE, x, y, 0, True, 65 + i])
+    
+    #buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
     #buttons.append([color, x_pos, y_pos, radius, visible, char])
 
 
