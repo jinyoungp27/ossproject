@@ -30,10 +30,6 @@ hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.pn
 
 limbs = 0
 
-##########################영진
-#def show_page():
-
-######################
 def redraw_game_window():
     global guessed
     global hangmanPics
@@ -102,6 +98,7 @@ def end(winner=False):
     global limbs
     lostTxt = 'You Lost, press any key to play again...'
     winTxt = 'WINNER!, press any key to play again...'
+    
     redraw_game_window()
     pygame.time.delay(1000)
     win.fill(WHITE)
@@ -139,10 +136,12 @@ def reset():
     limbs = 0
     guessed = []
     word = randomWord()
-
+    
 
 def main_menu():
+    global menu
     menu = True
+
     while menu:
         win.fill(WHITE)
         title = title_font.render("HANGMAN GAME", 1, BLACK)
@@ -174,9 +173,10 @@ def main_menu():
                     menu = False
                 elif hard_button.collidepoint(event.pos):
                     #set_difficulty("hard")
-                    munu = False
+                    menu = False
         
         pygame.display.update()
+        
 
 
 
@@ -195,7 +195,7 @@ for i in range(26):
     buttons.append([LIGHT_BLUE, x, y, 20, True, 65 + i])
     # buttons.append([color, x_pos, y_pos, radius, visible, char])
 
-#word = randomWord()
+word = randomWord()
 inPlay = True
 
 main_menu()
