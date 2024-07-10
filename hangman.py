@@ -26,11 +26,11 @@ title_font = pygame.font.SysFont('arial', 60)
 word = ''
 buttons = []
 guessed = []
+level = "easy"
 hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.png'), pygame.image.load('hangman2.png'), pygame.image.load('hangman3.png'), pygame.image.load('hangman4.png'), pygame.image.load('hangman5.png'), pygame.image.load('hangman6.png')]
 
 limbs = 1
 max_limbs = 5
-level = 'easy'
 
 
 #def show_page():
@@ -59,7 +59,8 @@ def redraw_game_window():
     win.blit(pic, (winWidth/2 - pic.get_width()/2 + 20, 150))
     pygame.display.update()
     
-def randomWord(level = "easy"):
+def randomWord():
+    global max_limbs
     ###################################################
     ## 박진영                                          ##
     ## hard 7글자 이상 파일인 words1.txt 가져와서 리턴         ##
@@ -67,9 +68,13 @@ def randomWord(level = "easy"):
     ###################################################
     if level == 'hard':
         file = open('words_hard.txt')
+        max_limbs = 3
     else:
         file = open('words_7.txt')
-        max_limbs = 3 if level == "normal" else 5
+        if level == "normal":
+            max_limbs = 3
+        else:
+            max_limbs = 5
         
     f = file.readlines()
     i = random.randrange(0, len(f) - 1)
@@ -140,9 +145,9 @@ def end(winner=False):
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 again = False
-
-    main_menu()
     reset()
+    main_menu()
+    
 
 
 def reset():
@@ -151,19 +156,22 @@ def reset():
     global buttons
     global word
     global max_limbs
+    global level
     for i in range(len(buttons)):
         buttons[i][4] = True
 
     limbs = 1
     guessed = []
     word = randomWord()
-    max_limbs = 5 if level == 'easy' else 3
+    max_limbs = 5 
 
     
 
 def main_menu():
     global menu
     menu = True
+    global level
+    global word
 
     while menu:
         win.fill(WHITE)
@@ -189,24 +197,22 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_button.collidepoint(event.pos):
-                    #set_difficulty('easy')
+                    level = "easy"
+                    word = randomWord()
                     menu = False
                 elif normal_button.collidepoint(event.pos):
-                    #set_difficulty('normal')
+                    level = "normal"
+                    word = randomWord()
                     menu = False
                 elif hard_button.collidepoint(event.pos):
-                    #set_difficulty("hard")
+                    level = "hard"
+                    word = randomWord()
                     menu = False
         
         pygame.display.update()
         
 
 
-
-
-    
-   
-    
 #MAINLINE
 
 # Setup buttons
@@ -222,13 +228,15 @@ for i in range(26):
     #buttons.append([color, x_pos, y_pos, radius, visible, char])
 
 
-main_menu()
-reset()
-
 word = randomWord()
+reset()
+main_menu()
+
+
 inPlay = True
 
 while inPlay:
+    
     redraw_game_window()
     pygame.time.delay(10)
 
