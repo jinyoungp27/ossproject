@@ -26,11 +26,15 @@ title_font = pygame.font.SysFont('arial', 60)
 word = ''
 buttons = []
 guessed = []
+level = "easy"
 hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.png'), pygame.image.load('hangman2.png'), pygame.image.load('hangman3.png'), pygame.image.load('hangman4.png'), pygame.image.load('hangman5.png'), pygame.image.load('hangman6.png')]
 
-limbs = 0
-max_limbs = 4
-level = 'easy'
+limbs = 1
+max_limbs = 5
+
+hint_button = {'color': LIGHT_BLUE, 'x' : winWidth - 100, 'y' : winHeight - 70, 'width' : 80, 'height' : 40, 'text' : 'HINT'}
+hint_limit = 3
+hint_used = 0
 
 #def show_page():
 
@@ -57,15 +61,24 @@ def redraw_game_window():
     ################################
     
     pic = hangmanPics[limbs]
-    word_x = (winWidth - length) // 2
+    win.blit(pic, (winWidth/2 - pic.get_width()/2 + 20, 150))
+    pygame.draw.rect(win, hint_button['color'],
+                     (hint_button['x'], hint_button['y'], hint_button['width'], hint_button['height']))
+    hint_label = btn_font.render(hint_button['text'], 1, BLACK)
+    win.blit(hint_label, (hint_button['x'] + (hint_button['width'] - hint_label.get_width()) / 2,
+                          hint_button['y'] + (hint_button['height'] - hint_label.get_height()) / 2))
 
-    win.blit(label1,(word_x, 200))
-    win.blit(pic, (65, 280))
+    hint_count_label = btn_font.render(f'{hint_used}/{hint_limit}', 1, BLACK)
+    win.blit(hint_count_label, (hint_button['x'] + (hint_button['width'] - hint_count_label.get_width()) / 2,
+                                hint_button['y'] + hint_button['height']))
+
+    
     pygame.display.update()
 
 
     
-def randomWord(level = "easy"):
+def randomWord():
+    global max_limbs
     ###################################################
     ## 박진영                                          ##
     ## hard 7글자 이상 파일인 words1.txt 가져와서 리턴         ##
@@ -73,9 +86,13 @@ def randomWord(level = "easy"):
     ###################################################
     if level == 'hard':
         file = open('words_hard.txt')
+        max_limbs = 3
     else:
         file = open('words_7.txt')
-        max_limbs = 3 if level == "normal" else 5
+        if level == "normal":
+            max_limbs = 3
+        else:
+            max_limbs = 5
         
     f = file.readlines()
     i = random.randrange(0, len(f) - 1)
@@ -122,6 +139,7 @@ def end(winner=False):
     global limbs
     lostTxt = 'You Lost, press any key to play again...'
     winTxt = 'WINNER!, press any key to play again...'
+    
     redraw_game_window()
     pygame.time.delay(1000)
     win.fill(WHITE)
@@ -145,9 +163,9 @@ def end(winner=False):
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 again = False
-
-    select_level()
     reset()
+    main_menu()
+    
 
 
 def reset():
@@ -156,55 +174,92 @@ def reset():
     global buttons
     global word
     global max_limbs
+    global level
     for i in range(len(buttons)):
         buttons[i][4] = True
 
-    limbs = 0
+    limbs = 1
     guessed = []
     word = randomWord()
+    max_limbs = 5 
 
-    max_limbs = 4 if level == 'easy' else 2
+##########################
+## 김미리
+## 모든 알파벳 집합, 현재 단어에 사용된 알파벳 집합 생성
+## 사용되지 않은 알파벳 리스트 생성
+## 사용되지 않은 알파벳이 있을 경우, 무작위로 하나 선택 후 buttons 리스트에서 해당 알파벳 비활성화
+def give_hint():
+    global buttons, word
+    global hint_used
+
+    if hint_used >= hint_limit:
+        return
+    hint_used += 1
+
+    alphabet = set(chr(i) for i in range(65, 91))
+    used_letters = set(word.upper())
+    unused_letters = list(alphabet - used_letters - set(guessed))
+
+    if unused_letters:
+        hint_letter = random.choice(unused_letters)
+        for i in range(len(buttons)):
+            if chr(buttons[i][5]) == hint_letter:
+                buttons[i][4] = False
+                break
    
-    
-#MAINLINE
 
-def select_level():
+def main_menu():
+    global menu
+    menu = True
     global level
-    win.fill(WHITE)
-    easy_btn = pygame.Rect(winWidth / 2 - 100, winHeight / 2 - 60, 200, 40)
-    normal_btn = pygame.Rect(winWidth / 2 - 100, winHeight / 2, 200, 40)
-    hard_btn = pygame.Rect(winWidth / 2 - 100, winHeight / 2 + 60, 200, 40)
+    global word
 
-    pygame.draw.rect(win, BLACK, easy_btn)
-    pygame.draw.rect(win, BLACK, normal_btn)
-    pygame.draw.rect(win, BLACK, hard_btn)
+    while menu:
+        win.fill(WHITE)
+        title = title_font.render("HANGMAN GAME", 1, BLACK)
+        win.blit(title, (winWidth / 2 - title.get_width() / 2, 100))
 
-    easy_label = btn_font.render("Easy", 1, WHITE)
-    normal_label = btn_font.render("Normal", 1, WHITE)
-    hard_label = btn_font.render("Hard", 1, WHITE)
+        easy_button = pygame.Rect(winWidth / 2 - 50, 200, 100, 50)
+        normal_button = pygame.Rect(winWidth / 2 - 50, 270, 100, 50)
+        hard_button = pygame.Rect(winWidth / 2 - 50, 340, 100, 50)
 
-    win.blit(easy_label, (winWidth / 2 - easy_label.get_width() / 2, winHeight / 2 - 60 + (40 - easy_label.get_height()) / 2))
-    win.blit(normal_label, (winWidth / 2 - normal_label.get_width() / 2, winHeight / 2 + (40 - normal_label.get_height()) / 2))
-    win.blit(hard_label, (winWidth / 2 - hard_label.get_width() / 2, winHeight / 2 + 60 + (40 - hard_label.get_height()) / 2))
+        pygame.draw.rect(win, LIGHT_BLUE, easy_button)
+        pygame.draw.rect(win, LIGHT_BLUE, normal_button)
+        pygame.draw.rect(win, LIGHT_BLUE, hard_button)
 
-    pygame.display.update()
+        easy_label = btn_font.render("Easy", 1, BLACK)
+        normal_label = btn_font.render("Normal", 1, BLACK)
+        hard_label = btn_font.render("Hard", 1, BLACK)
 
-    selecting = True
-    while selecting:
+        win.blit(easy_label, (winWidth / 2 - easy_label.get_width() / 2, 215))
+        win.blit(normal_label, (winWidth / 2 - normal_label.get_width() / 2, 285))
+        win.blit(hard_label, (winWidth / 2 - hard_label.get_width() / 2, 355))
+
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                clickPos = pygame.mouse.get_pos()
-                if easy_btn.collidepoint(clickPos):
-                    level = 'easy'
-                    selecting = False
-                elif normal_btn.collidepoint(clickPos):
-                    level = 'normal'
-                    selecting = False
-                elif hard_btn.collidepoint(clickPos):
-                    level = 'hard'
-                    selecting = False
+                if easy_button.collidepoint(event.pos):
+                    level = "easy"
+                    word = randomWord()
+                    menu = False
+                elif normal_button.collidepoint(event.pos):
+                    level = "normal"
+                    word = randomWord()
+                    menu = False
+                elif hard_button.collidepoint(event.pos):
+                    level = "hard"
+                    word = randomWord()
+                    menu = False
+            
+        pygame.display.update()
+            
+
+                    
+        
+
+        
+
+
+#MAINLINE
 
 # Setup buttons
 increase = round(winWidth / 13)
@@ -226,13 +281,15 @@ for i in range(26):
     #buttons.append([color, x_pos, y_pos, radius, visible, char])
 
 
-select_level()
+word = randomWord()
 reset()
+main_menu()
 
-#word = randomWord()
+
 inPlay = True
 
 while inPlay:
+    
     redraw_game_window()
     pygame.time.delay(10)
 
@@ -257,6 +314,10 @@ while inPlay:
                     print(spacedOut(word, guessed))
                     if spacedOut(word, guessed).count('_') == 0:
                         end(True)
+            ## 김미리
+            ## 힌트 버튼 클릭시 give_hint() 함수 호출
+            if (hint_button['x'] < pygame.mouse.get_pos()[0] < hint_button['x'] + hint_button['width'] and hint_button['y'] < pygame.mouse.get_pos()[1] < hint_button['y'] + hint_button['height']):
+                            give_hint()
 
 pygame.quit()
 
