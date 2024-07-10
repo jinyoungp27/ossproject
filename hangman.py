@@ -59,8 +59,6 @@ def redraw_game_window():
     
     ######이유진####################
     ##글자 및 목숨 이미지 위치 수정 ##
-    ################################
-
     if level == "easy":
         pic = hangmanPics[limbs]
         win.blit(pic, (165, 365))
@@ -71,8 +69,6 @@ def redraw_game_window():
 
     word_x = (winWidth - length) // 2
     win.blit(label1,(word_x, 200))
-
-    
     
     pygame.draw.rect(win, hint_button['color'],
                      (hint_button['x'], hint_button['y'], hint_button['width'], hint_button['height']))
