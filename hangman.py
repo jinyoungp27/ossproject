@@ -28,10 +28,10 @@ guessed = []
 hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.png'), pygame.image.load('hangman2.png'), pygame.image.load('hangman3.png'), pygame.image.load('hangman4.png'), pygame.image.load('hangman5.png'), pygame.image.load('hangman6.png')]
 
 limbs = 0
-## 박진영
+###박진영###
 max_limbs = 4
 level = 'easy'
-## 끝
+#########
 
 def redraw_game_window():
     global guessed
