@@ -68,7 +68,7 @@ def redraw_game_window():
 
     hint_count_label = btn_font.render(f'{hint_used}/{hint_limit}', 1, BLACK)
     win.blit(hint_count_label, (hint_button['x'] + (hint_button['width'] - hint_count_label.get_width()) / 2,
-                                hint_button['y'] + hint_button['height'])
+                                hint_button['y'] + hint_button['height']))
 
     
     pygame.display.update()
@@ -247,10 +247,6 @@ def main_menu():
                     menu = False
             
         pygame.display.update()
-            ## 김미리
-            ## 힌트 버튼 클릭시 give_hint() 함수 호출
-            #elif (hint_button['x'] < pygame.mouse.get_pos()[0] < hint_button['x'] + hint_button['width'] and hint_button['y'] < pygame.mouse.get_pos()[1] < hint_button['y'] + hint_button['height']):
-                give_hint()
             
 
                     
@@ -307,6 +303,10 @@ while inPlay:
                     print(spacedOut(word, guessed))
                     if spacedOut(word, guessed).count('_') == 0:
                         end(True)
+            ## 김미리
+            ## 힌트 버튼 클릭시 give_hint() 함수 호출
+            if (hint_button['x'] < pygame.mouse.get_pos()[0] < hint_button['x'] + hint_button['width'] and hint_button['y'] < pygame.mouse.get_pos()[1] < hint_button['y'] + hint_button['height']):
+                            give_hint()
 
 pygame.quit()
 
