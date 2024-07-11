@@ -20,16 +20,19 @@ BLUE = (0,0,255)
 LIGHT_BLUE = (224,224,224)
 
 btn_font = pygame.font.SysFont("arial", 20)
-guess_font = pygame.font.SysFont("monospace", 24)
+guess_font = pygame.font.SysFont("monospace", 24, bold=True)
 lost_font = pygame.font.SysFont('arial', 20)
 title_font = pygame.font.SysFont('arial', 60)
 word = ''
 buttons = []
 guessed = []
 level = "easy"
-hangmanPics = [pygame.image.load('hangman0.png'), pygame.image.load('hangman1.png'), pygame.image.load('hangman2.png'), pygame.image.load('hangman3.png'), pygame.image.load('hangman4.png'), pygame.image.load('hangman5.png'), pygame.image.load('hangman6.png')]
+hangmanPics = [pygame.image.load('m_hangman0.png'), pygame.image.load('m_hangman1.png'), pygame.image.load('m_hangman2.png'), pygame.image.load('m_hangman3.png'), pygame.image.load('m_hangman4.png'), pygame.image.load('m_hangman5.png')]
 
-limbs = 1
+
+
+
+limbs = 0
 max_limbs = 5
 
 hint_button = {'color': LIGHT_BLUE, 'x' : winWidth - 100, 'y' : winHeight - 70, 'width' : 80, 'height' : 40, 'text' : 'HINT'}
@@ -59,16 +62,28 @@ def redraw_game_window():
     
     ######이유진####################
     ##글자 및 목숨 이미지 위치 수정 ##
+    ################################
+
     if level == "easy":
         pic = hangmanPics[limbs]
-        win.blit(pic, (165, 365))
+        win.blit(pic, (75, 125))
     else:
-        pic = hangmanPics[limbs +2]
-        win.blit(pic, (235, 365))
+        if limbs == 0:
+            pic_index = 0 
+        elif limbs == 1:
+            pic_index = 2
+        elif limbs == 2:
+            pic_index = 3
+        else:
+            pic_index = 5
+        
+        pic = hangmanPics[pic_index]
+        win.blit(pic, (75, 125))
 
-
+    
     word_x = (winWidth - length) // 2
-    win.blit(label1,(word_x, 200))
+    win.blit(label1,(word_x, 415))
+
     
     pygame.draw.rect(win, hint_button['color'],
                      (hint_button['x'], hint_button['y'], hint_button['width'], hint_button['height']))
@@ -94,13 +109,13 @@ def randomWord():
     ###################################################
     if level == 'hard':
         file = open('words_hard.txt')
-        max_limbs = 3
+        max_limbs = 2
     else:
         file = open('words_7.txt')
         if level == "normal":
-            max_limbs = 3
+            max_limbs = 2
         else:
-            max_limbs = 5
+            max_limbs = 4
         
     f = file.readlines()
     i = random.randrange(0, len(f) - 1)
@@ -186,10 +201,10 @@ def reset():
     for i in range(len(buttons)):
         buttons[i][4] = True
 
-    limbs = 1
+    limbs = 0
     guessed = []
     word = randomWord()
-    max_limbs = 5 
+    max_limbs = 5
 
 ##########################
 ## 김미리
@@ -317,9 +332,10 @@ while inPlay:
                 guessed.append(chr(letter))
                 buttons[letter - 65][4] = False
                 if hang(chr(letter)):
-                    if limbs != max_limbs:
+                    if limbs < max_limbs:
                         limbs += 1
                     else:
+                        limbs += 1
                         end()
                 else:
                     print(spacedOut(word, guessed))
